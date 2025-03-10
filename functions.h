@@ -1,21 +1,22 @@
-#ifndef __FUNCTIONS_H__
-#define __FUNCTIONS_H__
+#ifndef FUNCOES_H
+#define FUNCOES_H
 
 #include <stdio.h>
 #include <stdlib.h>
 
 struct No {
-  char *name;
-  int matricula;
-  struct No *prev;
-  struct No *next;
+    int mat;
+    char *nome;
+    struct No *ant;
+    struct No *prox;
 } No;
 
-No* makeList();
-No* insert(No *lista, int mat, char *nome); 
-No* remove(No *lista, int mat);
-No* findMat(No *lista, int mat);
-No* findName(No *lista, char *nome); 
-int showSize(No *lista);
+
+struct No *criar(int mat, char *nome);
+struct No *inserir(struct No *lista, int mat, char *nome);
+struct No *buscar(struct No *lista, char *nome);
+struct No *remover(struct No *lista, int mat);
+int tamanho(struct No *lista);
+void imprimir(struct No *lista);
 
 #endif
