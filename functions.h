@@ -1,4 +1,4 @@
-#indef __FUNCTIONS_H__
+#ifndef __FUNCTIONS_H__
 #define __FUNCTIONS_H__
 
 #include <stdio.h>
@@ -17,3 +17,5 @@ No* remove(No *lista, int mat);
 No* findMat(No *lista, int mat);
 No* findName(No *lista, char *nome); 
 int showSize(No *lista);
+
+#endif
