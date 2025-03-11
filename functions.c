@@ -1,92 +1,107 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "funcoes.h"
+#include "functions.h"
 
-
-// Função para criar um novo nó
-struct No* criar(int mat, char *nome) {
-    struct No* novo = (struct No*)malloc(sizeof(struct No));
-    novo->mat = mat;
-    novo->nome = strdup(nome);
-    novo->ant = NULL;
-    novo->prox = NULL;
-    return novo;
+No* makeList() {
+  return NULL;
 }
 
-// Inserir de forma ordenada pelo nome
-struct No* inserir(struct No *lista, int mat, char *nome) {
-    struct No *novo = criar(mat, nome);
-    if (!lista) return novo;
-    
-    struct No *atual = lista, *anterior = NULL;
-    while (atual && strcmp(atual->nome, nome) < 0) {
-        anterior = atual;
-        atual = atual->prox;
-    }
-    
-    novo->prox = atual;
-    novo->ant = anterior;
-    if (atual) atual->ant = novo;
-    if (anterior) {
-        anterior->prox = novo;
+No* insert(No *lista, int mat, char *nome) {
+    No *novo = (No*)malloc(sizeof(No));
+    if (!novo) {
+        printf("Erro de alocação de memória.\n");
         return lista;
     }
-    return novo;
+
+    novo->matricula = mat;
+    novo->name = strdup(nome);
+    novo->prev = NULL;
+    novo->next = NULL;
+
+    if (!lista) {
+        return novo; 
+    }
+
+    No *atual = lista;
+    No *anterior = NULL;
+
+    while (atual && strcmp(atual->name, nome) < 0) {
+        anterior = atual;
+        atual = atual->next;
+    }
+
+    if (!anterior) { 
+        novo->next = lista;
+        lista->prev = novo;
+        return novo;
+    } else {
+        novo->next = atual;
+        novo->prev = anterior;
+        anterior->next = novo;
+        if (atual) {
+            atual->prev = novo;
+        }
+    }
+
+    return lista;
 }
 
-// Remover um nó pela matrícula
-struct No* remover(struct No *lista, int mat) {
-    struct No *atual = lista;
-    while (atual && atual->mat != mat)
-        atual = atual->prox;
-    
-    if (!atual) return lista;
-    
-    if (atual->ant)
-        atual->ant->prox = atual->prox;
-    if (atual->prox)
-        atual->prox->ant = atual->ant;
-    
-    struct No *novaLista = (atual == lista) ? atual->prox : lista;
-    free(atual->nome);
+No* removeMat(No *lista, int mat) {
+    No *atual = lista;
+
+    while (atual && atual->matricula != mat) {
+        atual = atual->next;
+    }
+
+    if (!atual) {
+        printf("Matrícula não encontrada.\n");
+        return lista;
+    }
+
+    if (atual->prev) {
+        atual->prev->next = atual->next;
+    } else {
+        lista = atual->next;
+    }
+
+    if (atual->next) {
+        atual->next->prev = atual->prev;
+    }
+
+    free(atual->name);
     free(atual);
-    return novaLista;
+    return lista;
 }
 
-// // Buscar por matrícula
-// struct No* buscarMatricula(struct No *lista, int mat) {
-//     while (lista) {
-//         if (lista->mat == mat)
-//             return lista;
-//         lista = lista->prox;
-//     }
-//     return NULL;
-// }
-
-// Buscar por nome
-struct No* buscar(struct No *lista, char *nome) {
-    while (lista) {
-        if (strcmp(lista->nome, nome) == 0)
-            return lista;
-        lista = lista->prox;
+No* findMat(No *lista, int mat) {
+    No *atual = lista;
+    while (atual) {
+        if (atual->matricula == mat) {
+            return atual;
+        }
+        atual = atual->next;
     }
     return NULL;
 }
 
-// Retornar o tamanho da lista
-int tamanho(struct No *lista) {
-    int count = 0;
-    while (lista) {
-        count++;
-        lista = lista->prox;
+No* findName(No *lista, char *nome) {
+    No *atual = lista;
+    while (atual) {
+        if (strcmp(atual->name, nome) == 0) {
+            return atual;
+        }
+        atual = atual->next;
     }
-    return count;
+    return NULL;
 }
-// Função para imprimir a lista
-void imprimir(struct No *lista) {
-    while (lista) {
-        printf("Matricula: %d, Nome: %s\n", lista->mat, lista->nome);
-        lista = lista->prox;
+
+int showSize(No *lista) {
+    int cont = 0;
+    No *atual = lista;
+    while (atual) {
+        cont++;
+        atual = atual->next;
     }
+    return cont;
 }

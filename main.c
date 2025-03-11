@@ -1,63 +1,103 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "funcoes.h"
+#include "functions.h"
+
+void printList(No *lista) {
+    No *atual = lista;
+    if (!atual) {
+        printf("Lista vazia! Nada para mostrar.\n");
+        return;
+    }
+    
+    printf("\n=== ALUNOS CADASTRADOS ===\n");
+    while (atual) {
+        printf("Nome: %s\nMatrícula: %d\n", atual->name, atual->matricula);
+        printf("\n");
+        atual = atual->next;
+    }
+    printf("---------------------------\n");
+    printf("Total de alunos: %d\n", showSize(lista));
+}
 
 int main() {
-    struct No *lista = NULL;
-    int opcao, mat;
-    char nome[100];
-    
-    do {
-        printf("\nMenu:\n");
-        printf("1 - Inserir\n");
-        printf("2 - Remover\n");
-        printf("3 - Buscar por nome\n");
-        printf("4 - Imprimir lista\n");
-        printf("5 - Mostrar tamanho da lista\n");
-        printf("0 - Sair\n");
-        printf("Escolha uma opção: ");
-        scanf("%d", &opcao);
+    No *lista = makeList();
 
-        switch (opcao) {
+    int option, mat;
+    char nome[50];
+
+    do {
+        printf("\n===== MENU DE OPÇÕES =====\n");
+        printf("1 - Inserir aluno\n");
+        printf("2 - Remover aluno\n");
+        printf("3 - Buscar aluno por matrícula\n");
+        printf("4 - Buscar aluno por nome\n");
+        printf("5 - Mostrar lista\n");
+        printf("0 - Sair do programa\n");
+        printf("\nEscolha uma opção: ");
+        scanf("%d", &option);
+        getchar();
+
+        switch (option) {
             case 1:
-                printf("Digite a matrícula: ");
+                printf("\nDigite o nome do aluno: ");
+                fgets(nome, 50, stdin);
+                nome[strcspn(nome, "\n")] = '\0';
+                
+                printf("Digite a matrícula do aluno: ");
                 scanf("%d", &mat);
-                printf("Digite o nome: ");
-                fgets(nome, 100, stdin);
-                nome[strcspn(nome, "\n")] = 0;  
-                lista = inserir(lista, mat, nome);
-                break;
-            case 2:
-                printf("Digite a matrícula a ser removida: ");
-                scanf("%d", &mat);
-                lista = remover(lista, mat);
-                break;
-            case 3:
-                printf("Digite o nome a ser buscado: ");
                 getchar();
-                fgets(nome, 100, stdin);
-                nome[strcspn(nome, "\n")] = 0;
-                struct No *busca = buscar(lista, nome);
-                if (buscar)
-                    printf("Nome encontrado: %d, Nome: %s\n", busca->mat, busca->nome);
-                else
-                    printf("Nome não encontrado.\n");
+
+                lista = insert(lista, mat, nome);
+                printf("\nAluno adicionado com sucesso!\n");
                 break;
+
+            case 2:
+                printf("\nDigite a matrícula do aluno que deseja remover: ");
+                scanf("%d", &mat);
+                getchar();
+
+                lista = removeMat(lista, mat);
+                break;
+
+            case 3:
+                printf("\nDigite a matrícula do aluno para buscar: ");
+                scanf("%d", &mat);
+                getchar();
+
+                No *resultadoMat = findMat(lista, mat);
+                if (resultadoMat) {
+                    printf("\nAluno encontrado: %s \nMatrícula: %d\n", resultadoMat->name, resultadoMat->matricula);
+                } else {
+                    printf("Nenhum aluno com essa matrícula foi encontrado!\n");
+                }
+                break;
+
             case 4:
-                printf("Lista de alunos:\n");
-                imprimir(lista);
+                printf("\nDigite o nome do aluno para buscar: ");
+                fgets(nome, 50, stdin);
+                nome[strcspn(nome, "\n")] = '\0';
+
+                No *resultadoNome = findName(lista, nome);
+                if (resultadoNome) {
+                    printf("\nAluno encontrado: %s \nMatrícula: %d\n", resultadoNome->name, resultadoNome->matricula);
+                } else {
+                    printf("Nenhum aluno com esse nome foi encontrado!\n");
+                }
                 break;
+
             case 5:
-                printf("Tamanho da lista: %d\n", tamanho(lista));
+                printList(lista);
                 break;
+
             case 0:
-                printf("Saindo...\n");
+                printf("Até a próxima! ;)\n");
                 break;
+
             default:
-                printf("Opção inválida!\n");
+                printf("Essa opção não existe :/ \nTente novamente!\n"); 
         }
-    } while (opcao != 0);
+    } while (option != 0);
     
     return 0;
-} 
+}
